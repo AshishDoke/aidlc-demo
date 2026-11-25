@@ -1,0 +1,13 @@
+# Governance files need approval from the AIDLC owners (replace with real GitLab users/groups).
+[AIDLC governance]
+/.aidlc/            @aidlc-owners
+/tools/aidlc/       @aidlc-owners
+/.claude/           @aidlc-owners
+/.github/           @aidlc-owners
+/.githooks/         @aidlc-owners
+/.gitlab-ci.yml     @aidlc-owners
+/AGENTS.md          @aidlc-owners
+/requirements/      @product-owners
+
+[Application]
+/app/               @leave-tracker-devs

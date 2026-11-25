@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "AIDLC_CLIENT": "claude-code"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python tools/aidlc/aidlc.py next:*)",
+      "Bash(python tools/aidlc/aidlc.py complete:*)",
+      "Bash(python tools/aidlc/aidlc.py check:*)",
+      "Bash(python tools/aidlc/aidlc.py log:*)",
+      "Bash(python tools/aidlc/aidlc.py status:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m:*)"
+    ],
+    "deny": [
+      "Bash(python tools/aidlc/aidlc.py approve:*)",
+      "Bash(python tools/aidlc/aidlc.py reject:*)",
+      "Bash(python tools/aidlc/aidlc.py unblock:*)",
+      "Bash(python tools/aidlc/aidlc.py unlock:*)",
+      "Bash(python tools/aidlc/aidlc.py halt:*)",
+      "Bash(python tools/aidlc/aidlc.py unhalt:*)",
+      "Bash(python3 tools/aidlc/aidlc.py approve:*)",
+      "Bash(python3 tools/aidlc/aidlc.py reject:*)",
+      "Bash(py tools/aidlc/aidlc.py approve:*)",
+      "Bash(py tools/aidlc/aidlc.py reject:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git config:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Read(./.env)",
+      "Read(./**/*.pfx)",
+      "Read(./**/appsettings.Production.json)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          { "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/aidlc/aidlc.py\" guard", "timeout": 15 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          { "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/tools/aidlc/aidlc.py\" hook-log --client claude-code", "timeout": 15 }
+        ]
+      }
+    ]
+  }
+}

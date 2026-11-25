@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "project": "Team Leave Tracker (AIDLC demo)",
+  "base_branch": "main",
+  "branch_prefix": "aidlc/",
+  "requirements_dir": "requirements",
+  "id_pattern": "^[A-Z][A-Z0-9]+-[0-9]+$",
+  "lock_minutes": 120,
+
+  "test_command": "dotnet test app/LeaveTracker.sln",
+  "test_timeout_seconds": 900,
+
+  "budgets": {
+    "max_failed_completes_per_stage": 5
+  },
+  "limits": {
+    "max_files_changed": 30,
+    "max_lines_changed": 2000,
+    "max_tasks": 12
+  },
+
+  "required_sections": {
+    "ANALYZE":   ["Overview", "Requirement", "Scope", "Acceptance criteria", "Out of scope", "Open questions"],
+    "DESIGN":    ["Context", "Approach", "Affected files", "Data", "Risks", "Test strategy"],
+    "PLAN":      ["Tasks", "Plan data"],
+    "IMPLEMENT": ["Summary", "Tasks"],
+    "TEST":      ["Summary", "Acceptance criteria evidence", "Test results"],
+    "REVIEW":    ["Summary", "Acceptance criteria verification", "Code quality", "Security", "Guardrail report", "Recommendation"],
+    "MR":        ["Summary", "Changes", "Acceptance criteria", "Testing", "AI disclosure"]
+  },
+
+  "jira": {
+    "enabled": false,
+    "url_env": "JIRA_URL",
+    "user_env": "JIRA_USER",
+    "token_env": "JIRA_TOKEN"
+  },
+
+  "mr": {
+    "ai_may_push_feature_branch": false
+  }
+}

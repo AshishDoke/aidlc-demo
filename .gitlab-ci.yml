@@ -1,0 +1,35 @@
+# AIDLC enforcement in CI. The pipeline is the backstop that applies to every client (Claude, Copilot, human).
+stages: [governance, build]
+
+variables:
+  GIT_DEPTH: "0"          # full history: verify needs merge-base and the approved commit
+
+aidlc-engine-tests:
+  stage: governance
+  image: python:3.12
+  script:
+    - git config --global user.email ci@example.com && git config --global user.name ci
+    - python -m unittest discover -s tools/aidlc/tests -v
+  rules:
+    - changes: [tools/aidlc/**/*, .aidlc/**/*]
+
+aidlc-verify:
+  stage: governance
+  image: python:3.12
+  script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - >
+      python tools/aidlc/aidlc.py verify --ci
+      --branch "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+      --base "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+dotnet-test:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  script:
+    - if [ -f app/LeaveTracker.sln ]; then dotnet test app/LeaveTracker.sln; else echo "No solution yet (LT-001 not merged)"; fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

@@ -1,0 +1,85 @@
+{
+  "_comment": "AIDLC guardrails. Enforced by tools/aidlc/aidlc.py (complete/check/verify/guard). Changes to this file are protected and need human review.",
+
+  "protected_paths": [
+    ".aidlc/config.json",
+    ".aidlc/policies/**",
+    ".aidlc/skills/**",
+    ".aidlc/templates/**",
+    ".aidlc/context/**",
+    ".aidlc/runs/**",
+    ".aidlc/records/**",
+    ".aidlc/HALT",
+    "tools/aidlc/**",
+    ".claude/**",
+    ".github/**",
+    ".githooks/**",
+    ".gitlab-ci.yml",
+    ".gitlab/**",
+    ".vscode/**",
+    ".gitignore",
+    ".gitattributes",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "requirements/**",
+    "*.pfx",
+    "*.pem",
+    "*.key",
+    "*.env",
+    "*appsettings.Production.json"
+  ],
+
+  "deny_bash_patterns": [
+    "aidlc\\.py\\s+(approve|reject|unblock|unlock|halt|unhalt)\\b",
+    "git\\s+push\\b.*\\b(main|master|develop|release[^\\s]*)\\b",
+    "git\\s+push\\b.*(--force|--force-with-lease|\\s-f\\b)",
+    "git\\s+(merge|rebase|filter-branch|filter-repo)\\b",
+    "git\\s+reset\\s+--hard",
+    "git\\s+commit\\b.*--amend",
+    "git\\s+branch\\s+-[dD]\\b",
+    "git\\s+config\\b",
+    "--no-verify",
+    "(>|\\btee\\b|sed\\s+-i|Set-Content|Add-Content|Out-File|\\bcp\\b|\\bmv\\b|Copy-Item|Move-Item|\\brm\\b|Remove-Item|\\bdel\\b).*\\.aidlc[/\\\\](runs|records|HALT|policies|config)",
+    "\\b(unset|Remove-Item\\s+Env:)\\s*CLAUDECODE",
+    "CLAUDECODE\\s*=",
+    "\\b(curl|wget|Invoke-WebRequest|iwr|Invoke-RestMethod)\\b"
+  ],
+
+  "secret_patterns": [
+    "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+    "AKIA[0-9A-Z]{16}",
+    "ghp_[A-Za-z0-9]{36}",
+    "glpat-[A-Za-z0-9_-]{20,}",
+    "xox[baprs]-[A-Za-z0-9-]{10,}",
+    "(?i)(password|passwd|pwd|secret|api[_-]?key|access[_-]?token|client[_-]?secret)\\s*[:=]\\s*[\"'][^\"'\\s]{6,}[\"']",
+    "(?i)Password=[^;\"'\\s]{4,}"
+  ],
+
+  "test_file_globs": [
+    "*Tests/*",
+    "*tests/*",
+    "*Test.cs",
+    "*Tests.cs",
+    "*.test.js",
+    "*.spec.js",
+    "*test_*.py"
+  ],
+
+  "test_skip_patterns": [
+    "\\[(Fact|Theory)\\s*\\([^)]*Skip\\s*=",
+    "\\[Ignore",
+    "Assert\\.True\\(\\s*true\\s*\\)",
+    "\\b(it|describe|test)\\.skip\\(",
+    "\\bx(it|describe)\\(",
+    "@pytest\\.mark\\.skip"
+  ],
+
+  "redact_patterns": [
+    "-----BEGIN [A-Z ]*PRIVATE KEY-----[\\s\\S]*?-----END [A-Z ]*PRIVATE KEY-----",
+    "(?i)(password|passwd|pwd|secret|token|api[_-]?key)(\\s*[:=]\\s*)[^\\s,;\"']+",
+    "Bearer\\s+[A-Za-z0-9._~+/-]+=*",
+    "AKIA[0-9A-Z]{16}",
+    "glpat-[A-Za-z0-9_-]{20,}",
+    "ghp_[A-Za-z0-9]{36}"
+  ]
+}

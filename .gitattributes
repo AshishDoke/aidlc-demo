@@ -1,0 +1,5 @@
+* text=auto
+# Sealed AIDLC records are hashed; keep LF so hashes are identical on every OS.
+.aidlc/** text eol=lf
+*.sh text eol=lf
+.githooks/* text eol=lf

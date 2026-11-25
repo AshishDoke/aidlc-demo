@@ -1,0 +1,26 @@
+# AIDLC live working state (local to each machine; sealed copies go to .aidlc/records/)
+.aidlc/runs/*
+!.aidlc/runs/.gitkeep
+.aidlc/HALT
+
+# .NET
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+*.db
+*.db-shm
+*.db-wal
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editors / OS
+.vscode/*
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db

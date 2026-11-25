@@ -1,0 +1,13 @@
+{
+  // Copilot agent: never auto-approve terminal commands that are human-only in AIDLC.
+  // (Setting names follow VS Code's Copilot chat terminal auto-approve feature; verify against your VS Code version.)
+  "chat.tools.terminal.autoApprove": {
+    "/aidlc\\.py\\s+(approve|reject|unblock|unlock|halt|unhalt)/": false,
+    "/git\\s+(push|merge|rebase|reset|config)/": false,
+    "/aidlc\\.py\\s+(next|complete|check|log|status)/": true,
+    "dotnet build": true,
+    "dotnet test": true
+  },
+  "chat.promptFiles": true,
+  "files.eol": "\n"
+}
