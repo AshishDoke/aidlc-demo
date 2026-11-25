@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "engine": "1.0.0",
+  "req_id": "LT-001",
+  "title": "Keep track of employees and their leave",
+  "source": {
+    "type": "file",
+    "path": "requirements/LT-001.md",
+    "title": "Keep track of employees and their leave",
+    "depends_on": [],
+    "sha256": "sha256:36bff1a07628c6675726ce76a032a08090fb0b2f31e4354f0c69a88b23692a33"
+  },
+  "depends_on": [],
+  "branch": "aidlc/LT-001",
+  "base_branch": "main",
+  "base_sha": "0713026fee9213c6b2f76becbfa02a8c95571fb1",
+  "stage": "DONE",
+  "status": "DONE",
+  "created_at": "2026-11-25T15:41:49Z",
+  "attempts": {},
+  "artifacts": {
+    "INTAKE": {
+      "path": "requirement.md",
+      "sha256": "sha256:df335b4ada3046ca360eb84b4ce38b8eb763ad67cea69ad63040bb9a44a0369b"
+    },
+    "ANALYZE": {
+      "path": "spec.md",
+      "sha256": "sha256:827e66e75259821dd813f6b1e63a30c88498346c7943facf0709992941d35327"
+    },
+    "DESIGN": {
+      "path": "design.md",
+      "sha256": "sha256:dfe13dba8b86fcfe638d82a11588003b63db3b3747f084339943d85d5ce2e582"
+    },
+    "PLAN": {
+      "path": "plan.md",
+      "sha256": "sha256:1ad890ad0978b316ffb5a833eb1637f75454b69389d93b955ea17cd2e52896a1"
+    },
+    "IMPLEMENT": {
+      "path": "implementation-notes.md",
+      "sha256": "sha256:a141881da7eff90df30065abcedf0a910bbec12c3fcc9f24e1ba6151280eb72e",
+      "head": "0a64a8ffeb682731bc27523249bee16bd6efe684"
+    },
+    "TEST": {
+      "path": "test-report.md",
+      "sha256": "sha256:a0d9deefba1e7808de740af07fb7554ac291b37af97ffeee4b08caee2267e108",
+      "head": "0a64a8ffeb682731bc27523249bee16bd6efe684"
+    },
+    "REVIEW": {
+      "path": "review.md",
+      "sha256": "sha256:834926e3adf5c6e6665ae4910e1ec16eb324393fb0318446b0a2ba3c88ee2596",
+      "head": "0a64a8ffeb682731bc27523249bee16bd6efe684"
+    },
+    "MR": {
+      "path": "mr.md",
+      "sha256": "sha256:6f94b707b5f7f7de2218d825e02c3f3353262718b4200cb2a80bd9255a63ce8c"
+    }
+  },
+  "updated_at": "2026-11-25T16:26:04Z",
+  "last_test": {
+    "command": "dotnet test app/LeaveTracker.sln",
+    "exit_code": 0,
+    "at": "2026-11-25T16:18:30Z",
+    "log_sha256": "sha256:90c1c95f99ca32ee97aa3753ca60b43ff5a7311530fcd3875c2aef0edd3ff33a"
+  },
+  "completed_at": "2026-11-25T16:26:04Z"
+}
