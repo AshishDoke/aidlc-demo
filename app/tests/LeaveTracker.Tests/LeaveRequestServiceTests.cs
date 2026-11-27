@@ -161,6 +161,136 @@ public class LeaveRequestServiceTests : IDisposable
         }
     }
 
+    private async Task<(int OtherManagerId, int OtherReportId)> AddOtherTeamAsync()
+    {
+        await using var db = _testDb.CreateContext();
+        var employees = new EmployeeService(db);
+        var otherManager = await employees.AddAsync(new NewEmployee("Other Boss", "other.boss@example.com", true, null));
+        var otherReport = await employees.AddAsync(new NewEmployee("Other Report", "other.report@example.com", false, otherManager.Id));
+        return (otherManager.Id, otherReport.Id);
+    }
+
+    private async Task<RuleViolationException> DecisionRefusedAsync(int requestId, int deciderId, bool approve, string? comment)
+    {
+        await using var db = _testDb.CreateContext();
+        return await Assert.ThrowsAsync<RuleViolationException>(() =>
+            new LeaveRequestService(db).RecordDecisionAsync(requestId, deciderId, approve, comment));
+    }
+
+    private async Task<LeaveStatus> StatusOfAsync(int requestId)
+    {
+        await using var db = _testDb.CreateContext();
+        return (await db.LeaveRequests.SingleAsync(r => r.Id == requestId)).Status;
+    }
+
+    // LT-002 AC5: an employee can only ask for leave for themselves.
+    [Fact]
+    public async Task Asking_for_someone_else_is_forbidden()
+    {
+        await using var db = _testDb.CreateContext();
+        var ex = await Assert.ThrowsAsync<RuleViolationException>(() =>
+            new LeaveRequestService(db).AskForSelfAsync(_managerId, new NewLeaveRequest(_reportId, Day, Day, LeaveType.Annual, null)));
+
+        Assert.Equal(RuleKind.Forbidden, ex.Kind);
+        Assert.Contains("only ask for leave for yourself", ex.Errors["employeeId"].Single());
+        Assert.Equal(0, await db.LeaveRequests.CountAsync());
+    }
+
+    [Fact]
+    public async Task Asking_for_self_is_pending()
+    {
+        await using var db = _testDb.CreateContext();
+        var created = await new LeaveRequestService(db).AskForSelfAsync(_reportId, new NewLeaveRequest(_reportId, Day, Day, LeaveType.Annual, null));
+
+        Assert.Equal(LeaveStatus.Pending, created.Status);
+    }
+
+    // LT-002 AC10: a rejection needs a reason; an approval comment is optional.
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task Rejection_without_reason_is_refused(string? reason)
+    {
+        var request = await AddAsync(new NewLeaveRequest(_reportId, Day, Day, LeaveType.Annual, null));
+
+        var ex = await DecisionRefusedAsync(request.Id, _managerId, approve: false, reason);
+
+        Assert.Equal(RuleKind.Validation, ex.Kind);
+        Assert.Contains("rejection needs a reason", ex.Errors["reason"].Single());
+        Assert.Equal(LeaveStatus.Pending, await StatusOfAsync(request.Id));
+    }
+
+    [Fact]
+    public async Task Approval_without_comment_uses_clock_time()
+    {
+        var request = await AddAsync(new NewLeaveRequest(_reportId, Day, Day, LeaveType.Annual, null));
+        var now = new DateTimeOffset(2026, 11, 27, 10, 15, 0, TimeSpan.Zero);
+
+        await using var db = _testDb.CreateContext();
+        var decided = await new LeaveRequestService(db, new FixedClock(now)).RecordDecisionAsync(request.Id, _managerId, true, null);
+
+        Assert.Equal(LeaveStatus.Approved, decided.Status);
+        Assert.Null(decided.DecisionComment);
+        Assert.Equal(now.UtcDateTime, decided.DecidedAtUtc);
+    }
+
+    // LT-002 AC11: a manager cannot decide a request from outside their team, including their own request.
+    [Fact]
+    public async Task Request_outside_team_is_forbidden()
+    {
+        var (otherManagerId, otherReportId) = await AddOtherTeamAsync();
+        var otherTeamRequest = await AddAsync(new NewLeaveRequest(otherReportId, Day, Day, LeaveType.Annual, null));
+        var ownRequest = await AddAsync(new NewLeaveRequest(_managerId, Day, Day, LeaveType.Annual, null));
+
+        var ex1 = await DecisionRefusedAsync(otherTeamRequest.Id, _managerId, approve: true, null);
+        var ex2 = await DecisionRefusedAsync(ownRequest.Id, _managerId, approve: false, "No");
+        var ex3 = await DecisionRefusedAsync(ownRequest.Id, otherManagerId, approve: true, null);
+
+        Assert.All(new[] { ex1, ex2, ex3 }, ex =>
+        {
+            Assert.Equal(RuleKind.Forbidden, ex.Kind);
+            Assert.Contains("not in your team", ex.Errors["requestId"].Single());
+        });
+        Assert.Equal(LeaveStatus.Pending, await StatusOfAsync(otherTeamRequest.Id));
+        Assert.Equal(LeaveStatus.Pending, await StatusOfAsync(ownRequest.Id));
+    }
+
+    // LT-002 AC12: a decided request cannot be decided again; the message says how and by whom.
+    [Fact]
+    public async Task Already_decided_is_a_conflict_naming_the_decision()
+    {
+        var request = await AddAsync(new NewLeaveRequest(_reportId, Day, Day, LeaveType.Annual, null));
+        await using (var db = _testDb.CreateContext())
+        {
+            await new LeaveRequestService(db).RecordDecisionAsync(request.Id, _managerId, true, "Enjoy");
+        }
+
+        var ex = await DecisionRefusedAsync(request.Id, _managerId, approve: false, "Changed my mind");
+
+        Assert.Equal(RuleKind.Conflict, ex.Kind);
+        Assert.Contains("already approved by Boss", ex.Errors["status"].Single());
+        await using var check = _testDb.CreateContext();
+        var stored = await check.LeaveRequests.SingleAsync(r => r.Id == request.Id);
+        Assert.Equal(LeaveStatus.Approved, stored.Status);
+        Assert.Equal("Enjoy", stored.DecisionComment);
+    }
+
+    // LT-002 AC13: deciding a request that does not exist.
+    [Fact]
+    public async Task Deciding_unknown_request_is_not_found()
+    {
+        var ex = await DecisionRefusedAsync(999, _managerId, approve: true, null);
+
+        Assert.Equal(RuleKind.NotFound, ex.Kind);
+        Assert.Contains("No leave request with id 999", ex.Errors["requestId"].Single());
+    }
+
+    private sealed class FixedClock(DateTimeOffset now) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => now;
+    }
+
     // LT-002 AC14 / Q4: calendar days, first and last day included.
     [Theory]
     [InlineData("2026-12-14", "2026-12-14", 1)]

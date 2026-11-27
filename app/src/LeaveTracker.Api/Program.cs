@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Leave") ?? "Data Source=leave.db";
 builder.Services.AddDbContext<LeaveDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<LeaveRequestService>();
 builder.Services.AddProblemDetails();
