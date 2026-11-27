@@ -135,6 +135,7 @@ public class EmployeePageTests : IClassFixture<EmployeePageTests.Host>
     [InlineData("/js/api.js", "text/javascript")]
     [InlineData("/js/identity.js", "text/javascript")]
     [InlineData("/js/format.js", "text/javascript")]
+    [InlineData("/js/employee.js", "text/javascript")]
     public async Task Static_assets_are_served_with_correct_types(string path, string mediaType)
     {
         var response = await _client.GetAsync(path);
@@ -173,6 +174,45 @@ public class EmployeePageTests : IClassFixture<EmployeePageTests.Host>
         Assert.Matches("function rememberEmployeeId\\(id\\) \\{\\s*try \\{", identity);
         // An unknown remembered id is forgotten (AC4).
         Assert.Contains("rememberEmployeeId(null)", identity);
+    }
+
+    // Safety: nothing is loaded from the internet (project.md: no CDN), and user text is never inserted as HTML.
+    [Fact]
+    public async Task Frontend_uses_no_external_urls_or_innerHTML()
+    {
+        var files = new Dictionary<string, string>();
+        foreach (var path in new[] { "/", "/css/site.css", "/js/api.js", "/js/identity.js", "/js/format.js", "/js/employee.js" })
+        {
+            files[path] = await GetTextAsync(path);
+        }
+
+        Assert.All(files, f => Assert.DoesNotMatch("https?://", f.Value));
+        Assert.All(files.Where(f => f.Key.EndsWith(".js")), f =>
+        {
+            Assert.DoesNotContain("innerHTML", f.Value);
+            Assert.DoesNotContain("outerHTML", f.Value);
+            Assert.DoesNotContain("insertAdjacentHTML", f.Value);
+            Assert.DoesNotContain("document.write", f.Value);
+        });
+    }
+
+    // AC5/AC6/AC9/AC12: the page script is wired to the form, the picker, the manager link and the API routes it needs.
+    [Fact]
+    public async Task Page_script_uses_the_expected_api_routes()
+    {
+        var html = await PageAsync();
+        Assert.Contains("<script type=\"module\" src=\"js/employee.js\"></script>", html);
+
+        var js = await GetTextAsync("/js/employee.js");
+        Assert.Contains("'/api/me/leave-requests'", js);
+        Assert.Contains("'/api/leave-requests', { method: 'POST'", js);
+        Assert.Contains("person.isManager", js);
+        // Every API field the server can name maps to a form control with an error slot.
+        foreach (var (field, id) in new[] { ("firstDay", "first-day"), ("lastDay", "last-day"), ("type", "type"), ("reason", "reason") })
+        {
+            Assert.Contains($"{field}: '{id}'", js);
+            Assert.Contains($"id=\"{id}-error\"", html);
+        }
     }
 
     // AC10: keyboard focus is always visible.
