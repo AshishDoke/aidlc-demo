@@ -15,7 +15,7 @@
   },
   "limits": {
     "max_files_changed": 30,
-    "max_lines_changed": 2000,
+    "max_lines_changed": 3000,
     "max_tasks": 12
   },
 
@@ -37,6 +37,6 @@
   },
 
   "mr": {
-    "ai_may_push_feature_branch": false
+    "ai_may_push_feature_branch": true
   }
 }
