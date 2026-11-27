@@ -35,6 +35,8 @@ public class IdentityApiTests
             data.Add(who, "POST", "/api/leave-requests");
             data.Add(who, "POST", "/api/leave-requests/1/approve");
             data.Add(who, "POST", "/api/leave-requests/1/reject");
+            data.Add(who, "GET", "/api/me/leave-requests");
+            data.Add(who, "GET", "/api/team/leave-requests/pending");
         }
 
         return data;

@@ -19,6 +19,37 @@ public sealed class LeaveRequestService(LeaveDbContext db, TimeProvider? clock =
     /// <summary>Calendar days from first to last day, both included (a single day is 1).</summary>
     public static int DaysCovered(DateOnly firstDay, DateOnly lastDay) => lastDay.DayNumber - firstDay.DayNumber + 1;
 
+    /// <summary>All requests of one employee, any state, most recently made first (Q5: descending id = insertion order).</summary>
+    public Task<List<LeaveRequest>> GetForEmployeeAsync(int employeeId, CancellationToken ct = default) =>
+        db.LeaveRequests.AsNoTracking()
+            .Include(r => r.Employee)
+            .Include(r => r.DecidedBy)
+            .Where(r => r.EmployeeId == employeeId)
+            .OrderByDescending(r => r.Id)
+            .ToListAsync(ct);
+
+    /// <summary>
+    /// Pending requests of a manager's direct reports (Q3), earliest first day first (Q6).
+    /// Refused for someone who is not a manager.
+    /// </summary>
+    public async Task<List<LeaveRequest>> GetPendingForTeamAsync(int managerId, CancellationToken ct = default)
+    {
+        var isManager = await db.Employees.AnyAsync(e => e.Id == managerId && e.IsManager, ct);
+        if (!isManager)
+        {
+            throw new RuleViolationException(
+                "employeeId", "Only managers can see team requests. You are not a manager.", RuleKind.Forbidden);
+        }
+
+        return await db.LeaveRequests.AsNoTracking()
+            .Include(r => r.Employee)
+            .Include(r => r.DecidedBy)
+            .Where(r => r.Status == LeaveStatus.Pending && r.Employee!.ManagerId == managerId)
+            .OrderBy(r => r.FirstDay)
+            .ThenBy(r => r.Id)
+            .ToListAsync(ct);
+    }
+
     /// <summary>
     /// An employee asks for leave for themselves (LT-002). Refused when the request names someone else.
     /// </summary>

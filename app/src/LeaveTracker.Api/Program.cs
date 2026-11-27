@@ -28,6 +28,7 @@ using (var scope = app.Services.CreateScope())
 app.MapHealthEndpoints();
 app.MapEmployeeEndpoints();
 app.MapLeaveRequestEndpoints();
+app.MapMyRequestsEndpoints();
 
 await app.RunAsync();
 
