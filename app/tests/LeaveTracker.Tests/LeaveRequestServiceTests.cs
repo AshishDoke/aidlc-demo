@@ -161,6 +161,18 @@ public class LeaveRequestServiceTests : IDisposable
         }
     }
 
+    // LT-002 AC14 / Q4: calendar days, first and last day included.
+    [Theory]
+    [InlineData("2026-12-14", "2026-12-14", 1)]
+    [InlineData("2026-12-14", "2026-12-16", 3)]
+    [InlineData("2026-11-30", "2026-12-01", 2)]
+    [InlineData("2026-12-31", "2027-01-01", 2)]
+    [InlineData("2028-02-28", "2028-03-01", 3)]
+    public void Days_covered_is_inclusive_calendar_days(string first, string last, int expected)
+    {
+        Assert.Equal(expected, LeaveRequestService.DaysCovered(DateOnly.Parse(first), DateOnly.Parse(last)));
+    }
+
     [Fact]
     public async Task Decision_comment_over_500_chars_is_refused()
     {

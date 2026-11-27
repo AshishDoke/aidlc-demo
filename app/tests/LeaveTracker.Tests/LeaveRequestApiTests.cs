@@ -36,6 +36,8 @@ public class LeaveRequestApiTests
             var first = DateOnly.ParseExact(r.GetProperty("firstDay").GetString()!, "yyyy-MM-dd");
             var last = DateOnly.ParseExact(r.GetProperty("lastDay").GetString()!, "yyyy-MM-dd");
             Assert.True(last >= first);
+            // LT-002 AC14: every request shows the calendar days it covers, both ends included.
+            Assert.Equal(last.DayNumber - first.DayNumber + 1, r.GetProperty("daysCovered").GetInt32());
             Assert.Contains(r.GetProperty("type").GetString(), new[] { "annual", "sick", "unpaid" });
             Assert.True(r.TryGetProperty("reason", out var reason));
             Assert.True(reason.ValueKind is JsonValueKind.String or JsonValueKind.Null);
@@ -62,6 +64,8 @@ public class LeaveRequestApiTests
             Assert.Contains(r.GetProperty("decidedById").GetInt32(), managerIds);
             Assert.False(string.IsNullOrWhiteSpace(r.GetProperty("decidedByName").GetString()));
             Assert.Equal(JsonValueKind.String, r.GetProperty("decidedAtUtc").ValueKind);
+            // LT-002 Q10 / LT-001 review item 1: decision times are marked as UTC.
+            Assert.EndsWith("Z", r.GetProperty("decidedAtUtc").GetString());
             Assert.True(r.TryGetProperty("decisionComment", out _));
         }
 
@@ -90,6 +94,10 @@ public class LeaveRequestApiTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         Assert.Equal(id, json.RootElement.GetProperty("id").GetInt32());
+        // LT-002 AC13/AC14: a single lookup needs no picked person and shows all details, including days covered.
+        Assert.True(json.RootElement.GetProperty("daysCovered").GetInt32() >= 1);
+        Assert.True(json.RootElement.TryGetProperty("status", out _));
+        Assert.True(json.RootElement.TryGetProperty("decidedById", out _));
     }
 
     [Fact]

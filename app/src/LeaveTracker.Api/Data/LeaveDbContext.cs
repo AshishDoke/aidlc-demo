@@ -28,6 +28,11 @@ public class LeaveDbContext(DbContextOptions<LeaveDbContext> options) : DbContex
             r.Property(x => x.Status).HasConversion<string>().HasMaxLength(16);
             r.Property(x => x.Reason).HasMaxLength(500);
             r.Property(x => x.DecisionComment).HasMaxLength(500);
+            // SQLite has no time zone: values are written in UTC, so mark them as UTC when read back
+            // (otherwise JSON omits the 'Z'). Fixes LT-001 review item 1.
+            r.Property(x => x.DecidedAtUtc).HasConversion(
+                v => v,
+                v => v == null ? null : DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
             r.HasOne(x => x.Employee)
                 .WithMany()
                 .HasForeignKey(x => x.EmployeeId)

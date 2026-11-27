@@ -11,6 +11,9 @@ public sealed class LeaveRequestService(LeaveDbContext db)
 {
     public const int TextMaxLength = 500;
 
+    /// <summary>Calendar days from first to last day, both included (a single day is 1).</summary>
+    public static int DaysCovered(DateOnly firstDay, DateOnly lastDay) => lastDay.DayNumber - firstDay.DayNumber + 1;
+
     /// <summary>Records a new request. It always starts as Pending with no decision.</summary>
     public async Task<LeaveRequest> AddAsync(NewLeaveRequest input, CancellationToken ct = default)
     {

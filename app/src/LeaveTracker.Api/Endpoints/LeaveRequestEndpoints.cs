@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeaveTracker.Api.Endpoints;
 
-/// <summary>Read-only leave request endpoints (LT-001). Asking for and deciding on leave comes in LT-002.</summary>
+/// <summary>Leave request endpoints. Reads are anonymous (LT-001, LT-002 AC13).</summary>
 public static class LeaveRequestEndpoints
 {
     public static IEndpointRouteBuilder MapLeaveRequestEndpoints(this IEndpointRouteBuilder app)
@@ -13,40 +13,32 @@ public static class LeaveRequestEndpoints
 
         group.MapGet("/", async (LeaveDbContext db, CancellationToken ct) =>
         {
-            var requests = await Project(db.LeaveRequests.AsNoTracking()
-                    .OrderBy(r => r.FirstDay)
-                    .ThenBy(r => r.Id))
+            var requests = await WithPeople(db)
+                .OrderBy(r => r.FirstDay)
+                .ThenBy(r => r.Id)
                 .ToListAsync(ct);
-            return Results.Ok(requests);
+            return Results.Ok(requests.Select(LeaveRequestResponse.From));
         });
 
         group.MapGet("/{id:int}", async (int id, LeaveDbContext db, CancellationToken ct) =>
         {
-            var request = await Project(db.LeaveRequests.AsNoTracking().Where(r => r.Id == id))
-                .SingleOrDefaultAsync(ct);
+            var request = await WithPeople(db).SingleOrDefaultAsync(r => r.Id == id, ct);
             return request is null
-                ? Results.Problem(
-                    title: "Leave request not found",
-                    detail: $"No leave request with id {id}.",
-                    statusCode: StatusCodes.Status404NotFound)
-                : Results.Ok(request);
+                ? RequestNotFound(id)
+                : Results.Ok(LeaveRequestResponse.From(request));
         });
 
         return app;
     }
 
-    private static IQueryable<LeaveRequestResponse> Project(IQueryable<LeaveRequest> query) =>
-        query.Select(r => new LeaveRequestResponse(
-            r.Id,
-            r.EmployeeId,
-            r.Employee!.Name,
-            r.FirstDay,
-            r.LastDay,
-            r.Type,
-            r.Reason,
-            r.Status,
-            r.DecidedById,
-            r.DecidedBy == null ? null : r.DecidedBy.Name,
-            r.DecidedAtUtc,
-            r.DecisionComment));
+    internal static IQueryable<LeaveRequest> WithPeople(LeaveDbContext db) =>
+        db.LeaveRequests.AsNoTracking()
+            .Include(r => r.Employee)
+            .Include(r => r.DecidedBy);
+
+    internal static IResult RequestNotFound(int id) =>
+        Results.Problem(
+            title: "Leave request not found",
+            detail: $"No leave request with id {id}.",
+            statusCode: StatusCodes.Status404NotFound);
 }
