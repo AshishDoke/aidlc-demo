@@ -60,7 +60,34 @@ public static class LeaveRequestEndpoints
             }
         });
 
+        group.MapPost("/{id:int}/approve", (int id, ApproveRequest? body, HttpContext http, LeaveDbContext db, LeaveRequestService service, CancellationToken ct) =>
+            DecideAsync(id, approve: true, body?.Comment, http, db, service, ct));
+
+        group.MapPost("/{id:int}/reject", (int id, RejectRequest? body, HttpContext http, LeaveDbContext db, LeaveRequestService service, CancellationToken ct) =>
+            DecideAsync(id, approve: false, body?.Reason, http, db, service, ct));
+
         return app;
+    }
+
+    private static async Task<IResult> DecideAsync(
+        int id, bool approve, string? text, HttpContext http, LeaveDbContext db, LeaveRequestService service, CancellationToken ct)
+    {
+        var (me, whoError) = await CurrentEmployee.ResolveAsync(http, db, ct);
+        if (me is null)
+        {
+            return whoError!;
+        }
+
+        try
+        {
+            await service.RecordDecisionAsync(id, me.Id, approve, text, ct: ct);
+            var loaded = await WithPeople(db).SingleAsync(r => r.Id == id, ct);
+            return Results.Ok(LeaveRequestResponse.From(loaded));
+        }
+        catch (RuleViolationException ex)
+        {
+            return ex.ToResult();
+        }
     }
 
     private static DateOnly? ParseDay(string? value, string field, string label, Dictionary<string, string[]> errors)

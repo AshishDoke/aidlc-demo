@@ -33,6 +33,8 @@ public class IdentityApiTests
         foreach (var who in new string?[] { null, "abc", "9999" })
         {
             data.Add(who, "POST", "/api/leave-requests");
+            data.Add(who, "POST", "/api/leave-requests/1/approve");
+            data.Add(who, "POST", "/api/leave-requests/1/reject");
         }
 
         return data;
