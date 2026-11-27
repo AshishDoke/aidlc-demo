@@ -25,6 +25,10 @@ using (var scope = app.Services.CreateScope())
     await DemoSeeder.SeedAsync(db);
 }
 
+// Frontend (LT-003): "/" serves wwwroot/index.html; css/ and js/ are static files.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapHealthEndpoints();
 app.MapEmployeeEndpoints();
 app.MapLeaveRequestEndpoints();
