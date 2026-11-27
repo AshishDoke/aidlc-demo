@@ -129,6 +129,52 @@ public class EmployeePageTests : IClassFixture<EmployeePageTests.Host>
         Assert.Contains(" hidden", link);
     }
 
+    // The page's scripts and stylesheet are served with the right types (ES modules need a JavaScript type).
+    [Theory]
+    [InlineData("/css/site.css", "text/css")]
+    [InlineData("/js/api.js", "text/javascript")]
+    [InlineData("/js/identity.js", "text/javascript")]
+    [InlineData("/js/format.js", "text/javascript")]
+    public async Task Static_assets_are_served_with_correct_types(string path, string mediaType)
+    {
+        var response = await _client.GetAsync(path);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(mediaType, response.Content.Headers.ContentType?.MediaType);
+    }
+
+    // AC11: every status the API can return is shown as a word, and the CSS never relies on colour alone.
+    [Fact]
+    public async Task Status_is_rendered_as_text()
+    {
+        var format = await GetTextAsync("/js/format.js");
+        Assert.Contains("pending: 'Pending'", format);
+        Assert.Contains("approved: 'Approved'", format);
+        Assert.Contains("rejected: 'Rejected'", format);
+
+        // Each status style differs in border style as well as colour.
+        var css = await GetTextAsync("/css/site.css");
+        Assert.Matches("\\.status-pending\\s*\\{[^}]*border-style:\\s*dashed", css);
+        Assert.Matches("\\.status-approved\\s*\\{[^}]*border-style:\\s*solid", css);
+        Assert.Matches("\\.status-rejected\\s*\\{[^}]*border-style:\\s*double", css);
+    }
+
+    // AC3/AC4: the choice is remembered in this browser only, and storage problems never break the page.
+    [Fact]
+    public async Task Identity_is_remembered_in_local_storage_safely()
+    {
+        var identity = await GetTextAsync("/js/identity.js");
+
+        Assert.Contains("'leaveTracker.employeeId'", identity);
+        Assert.Contains("localStorage", identity);
+        // Storage is touched only in the two guarded helpers (read, and write/forget), each wrapped in try/catch.
+        Assert.Equal(3, Regex.Matches(identity, "window\\.localStorage\\.").Count);
+        Assert.Matches("function rememberedEmployeeId\\(\\) \\{\\s*try \\{", identity);
+        Assert.Matches("function rememberEmployeeId\\(id\\) \\{\\s*try \\{", identity);
+        // An unknown remembered id is forgotten (AC4).
+        Assert.Contains("rememberEmployeeId(null)", identity);
+    }
+
     // AC10: keyboard focus is always visible.
     [Fact]
     public async Task Stylesheet_has_visible_focus_style()
