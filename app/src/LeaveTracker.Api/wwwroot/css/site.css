@@ -1,0 +1,180 @@
+/* Leave Tracker: simple, clean, accessible. No external fonts or assets. */
+
+:root {
+  --text: #1b1f24;
+  --muted: #4a5360;
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --border: #c9ced6;
+  --accent: #1f5fbf;
+  --accent-dark: #174a96;
+  --focus: #b35c00;
+  --ok-bg: #e7f4ea;
+  --ok-text: #14532d;
+  --error-bg: #fdecec;
+  --error-text: #8a1c1c;
+  --pending-bg: #fff7e0;
+  --pending-text: #5c4300;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.wrap {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+h1, h2 { line-height: 1.25; }
+h2 { font-size: 1.25rem; margin: 0 0 0.75rem; }
+
+/* Header */
+.site-header {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 0 0.25rem;
+}
+
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+.app-name { font-size: 1.375rem; margin: 0; flex: 1 1 auto; }
+.who { display: flex; align-items: center; gap: 0.5rem; }
+.who label { font-weight: 600; }
+.demo-note { color: var(--muted); font-size: 0.875rem; margin: 0.25rem auto 0.5rem; }
+
+.manager-link {
+  color: var(--accent-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Cards and form */
+main { padding-top: 1.25rem; padding-bottom: 2rem; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+fieldset { border: 0; margin: 0; padding: 0; }
+fieldset:disabled { opacity: 0.6; }
+
+.field-row { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+.optional { font-weight: 400; color: var(--muted); }
+
+input, select, textarea, button {
+  font: inherit;
+  color: inherit;
+}
+
+input, select, textarea {
+  border: 1px solid #7a8391;
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  background: #fff;
+  min-height: 2.5rem;
+}
+
+textarea { width: 100%; max-width: 36rem; resize: vertical; }
+
+[aria-invalid="true"] {
+  border: 2px solid var(--error-text);
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 0.25rem;
+  padding: 0.55rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) { background: var(--accent-dark); }
+button:disabled { cursor: not-allowed; }
+
+/* Visible focus for keyboard users (AC10) */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.hint { color: var(--muted); margin: 0.25rem 0 0.75rem; font-size: 0.9375rem; }
+
+.field-error {
+  color: var(--error-text);
+  font-weight: 600;
+  margin: 0.25rem 0 0;
+}
+
+.field-error::before { content: "Error: "; }
+
+.message {
+  border-radius: 0.25rem;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+  border-left: 0.375rem solid;
+}
+
+.message-error { background: var(--error-bg); color: var(--error-text); }
+.message-ok { background: var(--ok-bg); color: var(--ok-text); }
+.message p { margin: 0; }
+
+/* My requests table */
+.table-scroll { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.5rem 0.625rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-size: 0.875rem; color: var(--muted); }
+.num { text-align: right; }
+
+/*
+ * Status is always the word itself (AC11). Colour and border style only add to it:
+ * pending = dashed, approved = solid, rejected = double border.
+ */
+.status {
+  display: inline-block;
+  font-weight: 700;
+  padding: 0.05rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 2px solid currentColor;
+  white-space: nowrap;
+}
+
+.status-pending { background: var(--pending-bg); color: var(--pending-text); border-style: dashed; }
+.status-approved { background: var(--ok-bg); color: var(--ok-text); border-style: solid; }
+.status-rejected { background: var(--error-bg); color: var(--error-text); border-style: double; border-width: 3px; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+[hidden] { display: none !important; }

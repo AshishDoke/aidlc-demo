@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leave Tracker – My leave</title>
+  <link rel="stylesheet" href="css/site.css">
+  <script type="module" src="js/employee.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <h1 class="app-name">Leave Tracker</h1>
+      <div class="who">
+        <label for="who">Who are you?</label>
+        <select id="who" name="who">
+          <option value="">— Pick who you are —</option>
+        </select>
+      </div>
+      <a id="manager-link" class="manager-link" href="manager.html" hidden>Manager page</a>
+    </div>
+    <p class="wrap demo-note">Demo: there is no login. Pick your own name from the list.</p>
+  </header>
+
+  <main class="wrap">
+    <p id="load-error" class="message message-error" role="alert" hidden></p>
+
+    <section aria-labelledby="ask-heading" class="card">
+      <h2 id="ask-heading">Ask for leave</h2>
+      <p id="pick-first" class="hint">Pick who you are to ask for leave.</p>
+
+      <form id="leave-form" novalidate>
+        <fieldset id="leave-fields" disabled>
+          <legend class="visually-hidden">Leave request</legend>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="first-day">First day</label>
+              <input type="date" id="first-day" name="firstDay" required aria-describedby="first-day-error">
+              <p id="first-day-error" class="field-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="last-day">Last day</label>
+              <input type="date" id="last-day" name="lastDay" required aria-describedby="last-day-error">
+              <p id="last-day-error" class="field-error" hidden></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="type">Type of leave</label>
+            <select id="type" name="type" required aria-describedby="type-error">
+              <option value="">Choose a type</option>
+              <option value="annual">Annual</option>
+              <option value="sick">Sick</option>
+              <option value="unpaid">Unpaid</option>
+            </select>
+            <p id="type-error" class="field-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="reason">Reason <span class="optional">(optional)</span></label>
+            <textarea id="reason" name="reason" rows="3" maxlength="500" aria-describedby="reason-hint reason-error"></textarea>
+            <p id="reason-hint" class="hint">Up to 500 characters.</p>
+            <p id="reason-error" class="field-error" hidden></p>
+          </div>
+
+          <div id="form-errors" class="message message-error" role="alert" tabindex="-1" hidden></div>
+          <div id="form-status" class="message message-ok" role="status" aria-live="polite" hidden></div>
+
+          <button type="submit" id="send-button">Send request</button>
+        </fieldset>
+      </form>
+    </section>
+
+    <section aria-labelledby="mine-heading" class="card">
+      <h2 id="mine-heading">My requests</h2>
+      <p id="mine-empty" class="hint">Pick who you are to see your requests.</p>
+      <div class="table-scroll">
+        <table id="mine-table" hidden>
+          <caption class="visually-hidden">My leave requests, newest first</caption>
+          <thead>
+            <tr>
+              <th scope="col">First day</th>
+              <th scope="col">Last day</th>
+              <th scope="col">Type</th>
+              <th scope="col" class="num">Days</th>
+              <th scope="col">Status</th>
+              <th scope="col">Manager's comment</th>
+            </tr>
+          </thead>
+          <tbody id="mine-rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
