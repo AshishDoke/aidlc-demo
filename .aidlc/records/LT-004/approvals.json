@@ -1,0 +1,39 @@
+{
+  "G1": {
+    "decision": "APPROVED",
+    "by": "Ashish Doke <ashishdo@cybage.com>",
+    "os_user": "ashishdo",
+    "host": "CVC2203",
+    "at": "2026-11-28T14:02:52Z",
+    "binding": {
+      "artifact": "spec.md",
+      "artifact_sha256": "sha256:341468ea49ec5927f380414a4100587f68842c1224c0aa5c98940dde858cf5fa"
+    },
+    "comment": ""
+  },
+  "G2": {
+    "decision": "APPROVED",
+    "by": "Ashish Doke <ashishdo@cybage.com>",
+    "os_user": "ashishdo",
+    "host": "CVC2203",
+    "at": "2026-11-28T14:26:29Z",
+    "binding": {
+      "artifact": "design.md",
+      "artifact_sha256": "sha256:214d2726a43a83a1b536a2590b482d3158941a307e1a47c8faec77b6aa5d4f80"
+    },
+    "comment": ""
+  },
+  "G3": {
+    "decision": "APPROVED",
+    "by": "Ashish Doke <ashishdo@cybage.com>",
+    "os_user": "ashishdo",
+    "host": "CVC2203",
+    "at": "2026-11-28T14:55:43Z",
+    "binding": {
+      "artifact": "review.md",
+      "artifact_sha256": "sha256:49632fb18ebb7bc40233b2eb8e3186f51834b8707279d771d58649c704af67e5",
+      "head": "a4e596e613f659bb7d6872bc7a144747b35de0b3"
+    },
+    "comment": ""
+  }
+}

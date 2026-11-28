@@ -1,0 +1,16 @@
+$ dotnet test app/LeaveTracker.sln
+exit=0
+
+  Determining projects to restore...
+  Restored E:\Projects\aidlc-demo-kit\aidlc-demo\app\src\LeaveTracker.Api\LeaveTracker.Api.csproj (in 756 ms).
+  Restored E:\Projects\aidlc-demo-kit\aidlc-demo\app\tests\LeaveTracker.Tests\LeaveTracker.Tests.csproj (in 771 ms).
+  LeaveTracker.Api -> E:\Projects\aidlc-demo-kit\aidlc-demo\app\src\LeaveTracker.Api\bin\Debug\net8.0\LeaveTracker.Api.dll
+  LeaveTracker.Tests -> E:\Projects\aidlc-demo-kit\aidlc-demo\app\tests\LeaveTracker.Tests\bin\Debug\net8.0\LeaveTracker.Tests.dll
+Test run for E:\Projects\aidlc-demo-kit\aidlc-demo\app\tests\LeaveTracker.Tests\bin\Debug\net8.0\LeaveTracker.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.14.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   132, Skipped:     0, Total:   132, Duration: 4 s - LeaveTracker.Tests.dll (net8.0)
+
