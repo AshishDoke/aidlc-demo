@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIDLC: AI-Driven Life Cycle guide</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --panel:#ffffff; --text:#1f2328; --muted:#5b636e; --line:#e3e3df;
+    --ai:#6b5bd6; --ai-bg:#efedfd; --eng:#0f7a5c; --eng-bg:#e3f5ee; --hum:#5f5e5a; --hum-bg:#f0efea;
+    --gate:#a8590b; --gate-bg:#fcf0dc; --code:#f2f2ef; --accent:#2b6cb0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#16171a; --panel:#1e2024; --text:#e6e6e3; --muted:#a2a6ad; --line:#30333a;
+      --ai:#a99ff0; --ai-bg:#2a2650; --eng:#5ccaa5; --eng-bg:#12372d; --hum:#c9c7bf; --hum-bg:#2c2c2a;
+      --gate:#f0b15c; --gate-bg:#3e2a0c; --code:#25272c; --accent:#7fb3ec; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font:15px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--text);background:var(--bg)}
+  .layout{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+  nav{position:sticky;top:0;height:100vh;overflow:auto;background:var(--panel);border-right:1px solid var(--line);padding:22px 16px}
+  nav .brand{font-weight:600;font-size:18px;margin:0 8px 2px}
+  nav .sub{color:var(--muted);font-size:12.5px;margin:0 8px 18px}
+  nav a{display:block;padding:6px 10px;border-radius:7px;color:var(--muted);text-decoration:none;font-size:14px}
+  nav a:hover{background:var(--code);color:var(--text)}
+  nav a.active{background:var(--ai-bg);color:var(--ai);font-weight:500}
+  nav .grp{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:16px 10px 4px}
+  main{padding:36px 48px 80px;max-width:1040px}
+  section{padding-top:14px;margin-bottom:46px;scroll-margin-top:12px}
+  h1{font-size:30px;margin:0 0 6px;font-weight:600}
+  h2{font-size:22px;margin:0 0 12px;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:600}
+  p{margin:8px 0}
+  .lead{font-size:17px;color:var(--muted);margin-bottom:18px}
+  code,pre{font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-size:13px}
+  code{background:var(--code);padding:1px 6px;border-radius:5px}
+  pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow:auto;border:1px solid var(--line);line-height:1.5}
+  pre code{background:none;padding:0}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px;background:var(--panel)}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-weight:600}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card b{display:block;margin-bottom:4px}
+  .tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:20px;font-weight:500}
+  .t-ai{background:var(--ai-bg);color:var(--ai)} .t-eng{background:var(--eng-bg);color:var(--eng)}
+  .t-hum{background:var(--hum-bg);color:var(--hum)} .t-gate{background:var(--gate-bg);color:var(--gate)}
+  .callout{border-left:4px solid var(--accent);background:var(--panel);padding:10px 14px;border-radius:0;margin:14px 0}
+  .callout.warn{border-color:var(--gate)}
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0}
+  .flow span{padding:6px 11px;border-radius:8px;font-size:13px;font-weight:500;border:1px solid var(--line);background:var(--panel)}
+  .flow .g{background:var(--gate-bg);color:var(--gate);border-color:transparent}
+  .flow .e{background:var(--eng-bg);color:var(--eng);border-color:transparent}
+  .flow i{font-style:normal;color:var(--muted)}
+  .diagram{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;margin:14px 0}
+  .diagram svg{width:100%;height:auto;display:block}
+  svg .box{fill:var(--panel);stroke:var(--line)} svg text{fill:var(--text);font:13px system-ui,sans-serif}
+  svg .ai{fill:var(--ai-bg);stroke:var(--ai)} svg .eng{fill:var(--eng-bg);stroke:var(--eng)}
+  svg .hum{fill:var(--hum-bg);stroke:var(--hum)} svg .sm{font-size:11.5px;fill:var(--muted)}
+  svg .t-ai{fill:var(--ai)} svg .t-eng{fill:var(--eng)} svg .ttl{font-weight:600}
+  svg .arr{stroke:var(--muted);stroke-width:1.4;fill:none} svg .dash{stroke-dasharray:5 4}
+  .tree{white-space:pre;line-height:1.55}
+  .tree .c{color:var(--muted)}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:10px 0}
+  .steps>li{counter-increment:s;position:relative;padding:12px 14px 12px 54px;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+  .steps>li::before{content:counter(s);position:absolute;left:14px;top:12px;width:28px;height:28px;border-radius:50%;background:var(--code);display:grid;place-items:center;font-weight:600;font-size:13px}
+  .who{margin-right:6px}
+  .steps pre{margin:8px 0 2px}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin:8px 0}
+  summary{cursor:pointer;font-weight:500}
+  @media (max-width:860px){.layout{grid-template-columns:1fr} nav{position:static;height:auto} main{padding:24px 18px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+  <div class="brand">AIDLC</div>
+  <div class="sub">AI-Driven Life Cycle: newcomer guide</div>
+  <div class="grp">Understand</div>
+  <a href="#what" class="active">What is AIDLC?</a>
+  <a href="#why">Why it exists</a>
+  <a href="#who">Who does what</a>
+  <a href="#arch">Architecture</a>
+  <a href="#lifecycle">Lifecycle and gates</a>
+  <div class="grp">Explore</div>
+  <a href="#folders">Folder structure</a>
+  <a href="#how">How one loop works</a>
+  <a href="#files">What a run looks like on disk</a>
+  <div class="grp">Try it</div>
+  <a href="#example">Worked example: LT-001</a>
+  <a href="#commands">Commands cheat sheet</a>
+  <a href="#guardrails">Guardrails</a>
+  <a href="#existing">Using it on an existing repo</a>
+  <a href="#faq">FAQ and glossary</a>
+</nav>
+
+<main>
+<section id="what">
+  <h1>AIDLC: AI-Driven Life Cycle</h1>
+  <p class="lead">A framework that takes a requirement all the way to a merge request using AI coding assistants
+  (Claude Code or GitHub Copilot), with <b>humans approving every important decision</b> and <b>every step logged</b>.</p>
+  <div class="cards">
+    <div class="card"><b>Input</b>A requirement: a Markdown file or a Jira ticket, e.g. <code>LT-001</code></div>
+    <div class="card"><b>Output</b>A feature branch with code, tests and a sealed evidence record, ready for a merge request</div>
+    <div class="card"><b>In between</b>Spec → design → plan → code → tests → review, with 3 human approval gates</div>
+    <div class="card"><b>Works with</b>Claude Code and GitHub Copilot (agent mode). You can switch tools mid-way</div>
+  </div>
+  <div class="callout"><b>The one idea to remember:</b> the AI does the <i>thinking work</i>. A small, boring script
+  (<code>aidlc.py</code>) enforces the <i>rules</i>. Humans make the <i>decisions</i>.</div>
+</section>
+
+<section id="why">
+  <h2>Why it exists</h2>
+  <table>
+    <tr><th>Problem with "just ask the AI to build it"</th><th>How AIDLC solves it</th></tr>
+    <tr><td>AI may skip steps, misunderstand the requirement, or drift out of scope</td><td>A fixed lifecycle with checks the AI cannot skip, plus a scope fence on which files may change</td></tr>
+    <tr><td>Nobody knows what the AI did or why</td><td>Append-only audit log: every stage, decision, tool call and approval, with who did it</td></tr>
+    <tr><td>No human control before code is written</td><td>Human gates: approve the spec (G1), the design (G2) and the final result (G3)</td></tr>
+    <tr><td>Long tasks break when the chat ends</td><td>Workflow state is saved to files, so you can resume any time, from any tool</td></tr>
+    <tr><td>Each AI tool behaves differently</td><td>The same instructions and the same engine for Claude and Copilot</td></tr>
+  </table>
+</section>
+
+<section id="who">
+  <h2>Who does what</h2>
+  <table>
+    <tr><th>Actor</th><th>Does</th><th>Never does</th></tr>
+    <tr><td><span class="tag t-hum">Human</span></td><td>Starts a run, reviews documents, approves or rejects gates, merges the MR</td><td>Edits the workflow state by hand</td></tr>
+    <tr><td><span class="tag t-ai">AI assistant</span><br><small>Claude / Copilot</small></td><td>Writes the spec, design, plan, code, tests, review and MR description. Asks the script "what next?"</td><td>Decides when to move on, approves gates, edits the logs, merges</td></tr>
+    <tr><td><span class="tag t-eng">aidlc.py script</span></td><td>Keeps the state, decides the next stage, runs checks and tests, records approvals, writes the audit log, enforces scope</td><td>Thinks, writes code, or calls an AI</td></tr>
+    <tr><td><span class="tag t-hum">Repo files</span></td><td>The memory: state, log, approvals and documents live in <code>.aidlc/</code></td><td>n/a</td></tr>
+  </table>
+  <div class="callout">Rule of thumb: if a step needs <b>judgement</b>, it's in an AI skill file. If it must be
+  <b>identical every time</b>, it's in the script.</div>
+</section>
+
+<section id="arch">
+  <h2>Architecture</h2>
+  <p>Four layers. Purple can make mistakes. Green enforces the rules. Grey is people and data.</p>
+  <div class="diagram">
+  <svg viewBox="0 0 760 560" role="img" aria-label="AIDLC architecture diagram">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.6" style="stroke:var(--muted)"/></marker></defs>
+    <rect class="hum" x="40" y="20" width="250" height="56" rx="10"/>
+    <text class="ttl" x="165" y="44" text-anchor="middle">You (human)</text><text class="sm" x="165" y="63" text-anchor="middle">run · approve · merge</text>
+    <rect class="hum" x="470" y="20" width="250" height="56" rx="10"/>
+    <text class="ttl" x="595" y="44" text-anchor="middle">Requirement source</text><text class="sm" x="595" y="63" text-anchor="middle">requirements/*.md or Jira</text>
+    <path class="arr" d="M165 76V112" marker-end="url(#ah)"/>
+    <rect class="ai" x="20" y="114" width="720" height="110" rx="14" fill-opacity=".5"/>
+    <text class="ttl t-ai" x="38" y="136">AI assistants: do the work (judgement)</text>
+    <rect class="ai" x="40" y="150" width="210" height="56" rx="9"/><text class="ttl" x="145" y="173" text-anchor="middle">Claude Code</text><text class="sm" x="145" y="192" text-anchor="middle">skill + hooks</text>
+    <rect class="ai" x="275" y="150" width="210" height="56" rx="9"/><text class="ttl" x="380" y="173" text-anchor="middle">Copilot agent</text><text class="sm" x="380" y="192" text-anchor="middle">prompt file</text>
+    <rect class="ai" x="510" y="150" width="210" height="56" rx="9"/><text class="ttl" x="615" y="173" text-anchor="middle">Stage skills</text><text class="sm" x="615" y="192" text-anchor="middle">.aidlc/skills/*.md (shared)</text>
+    <path class="arr" d="M380 224V262" marker-end="url(#ah)"/><text class="sm" x="390" y="248">next / complete</text>
+    <path class="arr" d="M595 76V100H745V320H722" marker-end="url(#ah)"/><text class="sm" x="600" y="96">intake</text>
+    <rect class="eng" x="20" y="264" width="720" height="110" rx="14" fill-opacity=".5"/>
+    <text class="ttl t-eng" x="38" y="286">aidlc.py engine: enforces the rules (deterministic)</text>
+    <rect class="eng" x="40" y="300" width="160" height="56" rx="9"/><text class="ttl" x="120" y="323" text-anchor="middle">Transitions</text><text class="sm" x="120" y="342" text-anchor="middle">what's next</text>
+    <rect class="eng" x="215" y="300" width="160" height="56" rx="9"/><text class="ttl" x="295" y="323" text-anchor="middle">Gates</text><text class="sm" x="295" y="342" text-anchor="middle">approve / reject</text>
+    <rect class="eng" x="390" y="300" width="160" height="56" rx="9"/><text class="ttl" x="470" y="323" text-anchor="middle">Guard + checks</text><text class="sm" x="470" y="342" text-anchor="middle">scope, tests, secrets</text>
+    <rect class="eng" x="565" y="300" width="155" height="56" rx="9"/><text class="ttl" x="642" y="323" text-anchor="middle">Audit</text><text class="sm" x="642" y="342" text-anchor="middle">hash-chained log</text>
+    <path class="arr dash" d="M60 76V90H5V366H295V360" marker-end="url(#ah)"/><text class="sm" x="16" y="250" transform="rotate(-90 16 250)">approve in own terminal</text>
+    <path class="arr" d="M380 374V412" marker-end="url(#ah)"/>
+    <rect class="hum" x="20" y="414" width="720" height="62" rx="14"/>
+    <text class="ttl" x="38" y="438">Run store: .aidlc/runs/&lt;ID&gt;/</text>
+    <text class="sm" x="38" y="458">state.json · audit.jsonl · approvals.json · artifacts/ (requirement, spec, design, plan, test report, review, MR)</text>
+    <path class="arr" d="M380 476V500" marker-end="url(#ah)"/>
+    <rect class="eng" x="40" y="502" width="210" height="44" rx="9"/><text class="ttl" x="145" y="529" text-anchor="middle">Sealed record + commit</text>
+    <path class="arr" d="M250 524H272" marker-end="url(#ah)"/>
+    <rect class="eng" x="275" y="502" width="210" height="44" rx="9"/><text class="ttl" x="380" y="529" text-anchor="middle">pre-push + CI verify</text>
+    <path class="arr" d="M485 524H507" marker-end="url(#ah)"/>
+    <rect class="hum" x="510" y="502" width="210" height="44" rx="9"/><text class="ttl" x="615" y="529" text-anchor="middle">Merge request (human merges)</text>
+  </svg>
+  </div>
+  <h3>Where is the "orchestrator"?</h3>
+  <p>It's split in two on purpose. The <span class="tag t-ai">loop driver</span> is the AI running the
+  <code>aidlc-run</code> skill: it keeps asking "what next?" and does the work. The <span class="tag t-eng">brain</span>
+  is <code>aidlc.py next/complete</code>: it decides. Because the brain is the same script for every tool, Claude and Copilot behave the same way.</p>
+</section>
+
+<section id="lifecycle">
+  <h2>Lifecycle and gates</h2>
+  <div class="flow">
+    <span class="e">INTAKE</span><i>→</i><span>ANALYZE</span><i>→</i><span class="g">G1 spec</span><i>→</i>
+    <span>DESIGN</span><i>→</i><span class="g">G2 design</span><i>→</i><span>PLAN</span><i>→</i><span>IMPLEMENT</span><i>→</i>
+    <span>TEST</span><i>→</i><span>REVIEW</span><i>→</i><span class="g">G3 raise MR</span><i>→</i><span>MR</span><i>→</i><span class="e">DONE (sealed)</span>
+  </div>
+  <table>
+    <tr><th>Stage</th><th>Who</th><th>Produces</th><th>Checked by the script before moving on</th></tr>
+    <tr><td>INTAKE</td><td><span class="tag t-eng">script</span></td><td><code>requirement.md</code> (a verbatim copy)</td><td>Dependencies merged, clean working tree, creates branch <code>aidlc/&lt;ID&gt;</code></td></tr>
+    <tr><td>ANALYZE</td><td><span class="tag t-ai">AI</span></td><td><code>spec.md</code></td><td>Required sections present, numbered <code>AC1, AC2…</code></td></tr>
+    <tr><td>G1</td><td><span class="tag t-gate">human</span></td><td>approval</td><td>Bound to the spec's hash</td></tr>
+    <tr><td>DESIGN</td><td><span class="tag t-ai">AI</span></td><td><code>design.md</code></td><td>Sections incl. "Affected files", no code changes yet</td></tr>
+    <tr><td>G2</td><td><span class="tag t-gate">human</span></td><td>approval</td><td>Bound to the design's hash</td></tr>
+    <tr><td>PLAN</td><td><span class="tag t-ai">AI</span></td><td><code>plan.md</code> with tasks + <code>allowed_files</code></td><td>Every AC covered by a task, scope not too broad, no protected paths</td></tr>
+    <tr><td>IMPLEMENT</td><td><span class="tag t-ai">AI</span></td><td>one commit per task <code>[ID][T1]…</code></td><td>All tasks committed, only allowed files changed, no secrets</td></tr>
+    <tr><td>TEST</td><td><span class="tag t-ai">AI</span> + <span class="tag t-eng">script</span></td><td><code>test-report.md</code></td><td>The <b>script runs the tests itself</b>, every AC has evidence, no skipped tests</td></tr>
+    <tr><td>REVIEW</td><td><span class="tag t-ai">AI</span></td><td><code>review.md</code></td><td>Guardrail scan clean, passing tests recorded</td></tr>
+    <tr><td>G3</td><td><span class="tag t-gate">human</span></td><td>approval</td><td>Bound to the review's hash and the exact commit</td></tr>
+    <tr><td>MR</td><td><span class="tag t-ai">AI</span> + <span class="tag t-eng">script</span></td><td><code>mr.md</code> + sealed record</td><td>No new commits after G3. The run is copied to <code>.aidlc/records/</code> and committed</td></tr>
+  </table>
+  <div class="callout warn"><b>Approvals are locked to content.</b> If someone edits an approved spec or design, or adds a commit
+  after G3, the approval is <b>revoked automatically</b> and the run goes back to that stage.</div>
+</section>
+
+<section id="folders">
+  <h2>Folder structure</h2>
+<pre class="tree">aidlc-demo/
+├── <b>tools/aidlc/aidlc.py</b>            <span class="c"># the engine: state, gates, checks, audit (Python, no dependencies)</span>
+│   └── tests/test_engine.py        <span class="c"># 13 self-tests</span>
+├── <b>.aidlc/</b>
+│   ├── config.json                 <span class="c"># base branch, test command, limits, required sections</span>
+│   ├── policies/guardrails.json    <span class="c"># protected paths, blocked commands, secret patterns</span>
+│   ├── skills/                     <span class="c"># AI instructions per stage (shared by Claude + Copilot)</span>
+│   │   ├── orchestrator.md         <span class="c">#   the loop: next → do stage → complete → repeat</span>
+│   │   └── analyze.md design.md plan.md implement.md test.md review.md mr.md
+│   ├── templates/                  <span class="c"># skeletons for spec, design, plan, review, MR …</span>
+│   ├── context/project.md          <span class="c"># background: stack, architecture, conventions</span>
+│   ├── runs/&lt;ID&gt;/                  <span class="c"># LIVE state of a run (local, git-ignored)</span>
+│   └── records/&lt;ID&gt;/               <span class="c"># SEALED evidence, committed with the MR</span>
+├── <b>.claude/</b>                        <span class="c"># Claude Code adapter</span>
+│   ├── settings.json               <span class="c">#   hooks (guard, log) + denied commands</span>
+│   └── skills/aidlc-run/SKILL.md   <span class="c">#   /aidlc-run &lt;ID&gt;</span>
+├── <b>.github/</b>                        <span class="c"># Copilot adapter</span>
+│   ├── copilot-instructions.md
+│   └── prompts/aidlc-run.prompt.md <span class="c">#   /aidlc-run in Copilot chat</span>
+├── AGENTS.md  CLAUDE.md            <span class="c"># shared rules every AI must follow</span>
+├── .githooks/pre-push              <span class="c"># verify before pushing</span>
+├── .gitlab-ci.yml  .gitlab/CODEOWNERS  <span class="c"># CI verify + who owns governance files</span>
+├── requirements/LT-001…LT-005.md   <span class="c"># demo requirements (Team Leave Tracker)</span>
+├── app/                            <span class="c"># the app, built BY the AIDLC runs</span>
+└── docs/                           <span class="c"># architecture, guardrails, demo script, review notes</span></pre>
+  <p><b>Live vs sealed:</b> <code>runs/</code> is the working memory and survives branch switches. <code>records/</code> is the
+  evidence that travels with the merge request.</p>
+</section>
+
+<section id="how">
+  <h2>How one loop works</h2>
+  <p>Every stage follows the same 4-beat rhythm:</p>
+  <ol class="steps">
+    <li><span class="tag t-ai who">AI</span> runs <code>python tools/aidlc/aidlc.py next LT-001 --client claude-code</code></li>
+    <li><span class="tag t-eng who">script</span> reads <code>state.json</code> and answers in JSON: which stage, which skill file to follow, which inputs to read, and which files the AI may write.
+<pre><code>{ "action": "DO_STAGE", "stage": "ANALYZE",
+  "skill": ".aidlc/skills/analyze.md",
+  "inputs": [".aidlc/runs/LT-001/artifacts/requirement.md", ".aidlc/context/project.md"],
+  "output": ".aidlc/runs/LT-001/artifacts/spec.md",
+  "allowed_paths": [".aidlc/runs/LT-001/artifacts/spec.md"] }</code></pre></li>
+    <li><span class="tag t-ai who">AI</span> does the work by following the skill, and writes the output.</li>
+    <li><span class="tag t-ai who">AI</span> runs <code>aidlc.py complete LT-001 --stage ANALYZE</code>. The <span class="tag t-eng">script</span> checks the output, logs it, and either moves on or says <b>STOP</b> (a gate needs a human).</li>
+  </ol>
+  <p>When it says STOP, the AI tells you what to review. You approve in <b>your own terminal</b>, then type <code>/aidlc-run LT-001</code> to resume.</p>
+</section>
+
+<section id="files">
+  <h2>What a run looks like on disk</h2>
+<pre class="tree">.aidlc/runs/LT-001/
+├── state.json        <span class="c"># where the run is: stage, status, branch, checkpoints</span>
+├── approvals.json    <span class="c"># who approved which gate, when, and the hash they approved</span>
+├── audit.jsonl       <span class="c"># everything that happened, one line per event, hash-chained</span>
+└── artifacts/
+    ├── requirement.md  spec.md  design.md  plan.md
+    ├── implementation-notes.md  test-report.md  test-output.log
+    ├── guardrail-report.json  review.md  mr.md
+    └── feedback.md     <span class="c"># your rejection comments (if any)</span></pre>
+  <details><summary>Example: state.json</summary>
+<pre><code>{ "req_id": "LT-001", "title": "Database, data model and solution skeleton",
+  "stage": "G2", "status": "AWAITING_APPROVAL", "branch": "aidlc/LT-001",
+  "artifacts": { "ANALYZE": { "path": "spec.md", "sha256": "sha256:ab12…" },
+                 "DESIGN":  { "path": "design.md", "sha256": "sha256:c77e…" } } }</code></pre></details>
+  <details><summary>Example: audit.jsonl (a few lines)</summary>
+<pre><code>{"seq":4,"actor":"ai:claude-code","action":"stage.complete","stage":"ANALYZE","prev_hash":"…","hash":"…"}
+{"seq":6,"actor":"human:Ash","action":"gate.reject","gate":"G1","comment":"Email must be unique"}
+{"seq":9,"actor":"human:Ash","action":"gate.approve","gate":"G1"}
+{"seq":11,"actor":"ai:copilot","action":"stage.complete","stage":"DESIGN"}</code></pre>
+  <p>Each line includes the hash of the previous line. Change any line and <code>verify</code> reports exactly which one.</p></details>
+</section>
+
+<section id="example">
+  <h2>Worked example: LT-001</h2>
+  <p><b>Requirement</b> (<code>requirements/LT-001.md</code>): "Create the .NET solution, a health endpoint, a SQLite database with
+  employees and leave requests, and seed demo data." Here is the whole journey.</p>
+  <ol class="steps">
+    <li><span class="tag t-hum who">You</span> In Claude Code type <code>/aidlc-run LT-001</code> (in Copilot: run the <code>/aidlc-run</code> prompt).</li>
+    <li><span class="tag t-eng who">script</span> Copies the requirement into <code>requirement.md</code>, creates branch <code>aidlc/LT-001</code> and <code>state.json</code>, and logs <code>run.created</code>.</li>
+    <li><span class="tag t-ai who">AI</span> <b>ANALYZE</b>: reads the requirement and project context, writes <code>spec.md</code>:
+<pre><code>## Acceptance criteria
+- AC1: The solution builds and GET /api/health returns 200
+- AC2: On first start leave.db is created with Employees and LeaveRequests tables
+- AC3: Seed creates 1 manager + 3 employees; restarting does not duplicate them
+## Open questions
+- Q1: Is email unique? Assumption: yes</code></pre></li>
+    <li><span class="tag t-eng who">script</span> Checks the sections and ACs → <b>STOP: G1 needed</b>. <span class="tag t-ai">AI</span> tells you: "please review spec.md".</li>
+    <li><span class="tag t-hum who">You</span> Read the spec. Not happy? <code>python tools/aidlc/aidlc.py reject LT-001 G1 --comment "Make email uniqueness an AC"</code>.
+      The AI gets your comment in <code>feedback.md</code> and fixes the spec. Happy? <code>python tools/aidlc/aidlc.py approve LT-001 G1</code> → type <code>APPROVE</code>.</li>
+    <li><span class="tag t-hum who">You</span> <code>/aidlc-run LT-001</code> → <span class="tag t-ai">AI</span> <b>DESIGN</b>: <code>design.md</code> lists exact files (e.g. <code>app/src/LeaveTracker.Api/Data/AppDbContext.cs</code>) → <b>STOP at G2</b> → you approve.</li>
+    <li><span class="tag t-ai who">AI</span> <b>PLAN</b>: tasks plus the scope fence:
+<pre><code>{"tasks":[{"id":"T1","title":"Solution + API + health","covers":["AC1"]},
+          {"id":"T2","title":"DbContext + entities + seed","covers":["AC2","AC3"]}],
+ "allowed_files":["app/LeaveTracker.sln","app/src/LeaveTracker.Api/**","app/tests/LeaveTracker.Tests/**"]}</code></pre></li>
+    <li><span class="tag t-ai who">AI</span> <b>IMPLEMENT</b>: commits <code>[LT-001][T1] Solution, API and health endpoint</code>, then <code>[LT-001][T2] …</code>.
+      If the chat stops after T1, the next <code>/aidlc-run</code> (even from Copilot) continues at T2.</li>
+    <li><span class="tag t-ai who">AI</span> + <span class="tag t-eng">script</span> <b>TEST</b>: the AI adds tests and writes <code>test-report.md</code> (AC → test). The script then runs <code>dotnet test</code> <b>itself</b>. A failure keeps the stage open.</li>
+    <li><span class="tag t-ai who">AI</span> <b>REVIEW</b>: runs <code>aidlc.py check</code> (scope, secrets, skipped tests), writes <code>review.md</code> with an honest recommendation → <b>STOP at G3</b>.</li>
+    <li><span class="tag t-hum who">You</span> Check <code>git log main..aidlc/LT-001</code> and the review, then <code>approve LT-001 G3</code>.</li>
+    <li><span class="tag t-ai who">AI</span> + <span class="tag t-eng">script</span> <b>MR</b>: writes <code>mr.md</code> (summary, AC checklist, AI disclosure). The script seals everything into <code>.aidlc/records/LT-001/</code> and commits it.</li>
+    <li><span class="tag t-hum who">You</span> Push and merge (<code>git merge --no-ff aidlc/LT-001</code> or a GitLab MR). CI runs <code>verify</code>. Now <b>LT-002</b> is unlocked.</li>
+  </ol>
+</section>
+
+<section id="commands">
+  <h2>Commands cheat sheet</h2>
+  <table>
+    <tr><th>You want to…</th><th>Run</th><th>Where</th></tr>
+    <tr><td>Start or resume a requirement</td><td><code>/aidlc-run LT-001</code></td><td>Claude Code / Copilot chat</td></tr>
+    <tr><td>See all runs</td><td><code>python tools/aidlc/aidlc.py status</code></td><td>Terminal</td></tr>
+    <tr><td>Approve a gate</td><td><code>python tools/aidlc/aidlc.py approve LT-001 G1</code></td><td>Your terminal (PowerShell; in Git Bash use <code>winpty python …</code>)</td></tr>
+    <tr><td>Reject with feedback</td><td><code>… reject LT-001 G1 --comment "…"</code></td><td>Your terminal</td></tr>
+    <tr><td>Unstick a BLOCKED run</td><td><code>… unblock LT-001</code></td><td>Your terminal</td></tr>
+    <tr><td>Emergency stop for all AI runs</td><td><code>… halt --reason "…"</code> / <code>… unhalt</code></td><td>Your terminal</td></tr>
+    <tr><td>Check log integrity and scope</td><td><code>… verify</code></td><td>Terminal / CI</td></tr>
+    <tr><td>Self-test the engine</td><td><code>python -m unittest discover -s tools/aidlc/tests</code></td><td>Terminal</td></tr>
+  </table>
+</section>
+
+<section id="guardrails">
+  <h2>Guardrails</h2>
+  <div class="cards">
+    <div class="card"><b>Humans approve</b>AI can't run approve/reject. The script refuses inside AI sessions and needs a real terminal.</div>
+    <div class="card"><b>Scope fence</b>Only files in the approved plan may change. Claude is blocked live; everyone is re-checked at complete and in CI.</div>
+    <div class="card"><b>Protected files</b>Rules, skills, engine, CI and requirements can't be changed by an AI run.</div>
+    <div class="card"><b>Honest tests</b>The script runs the tests. Skipped, deleted or fake tests are detected.</div>
+    <div class="card"><b>No secrets</b>Added lines are scanned. Secrets are redacted from logs.</div>
+    <div class="card"><b>Limits</b>Max files, lines and tasks per requirement. 5 failed attempts → BLOCKED for a human.</div>
+    <div class="card"><b>Git safety</b>No merge, rebase, force-push, amend, config changes, <code>--no-verify</code>, or push to main.</div>
+    <div class="card"><b>Tamper-evident</b>Hash-chained log and hash-bound approvals, verified in pre-push and CI.</div>
+    <div class="card"><b>Kill switch and locks</b><code>halt</code> stops everything. One AI per requirement at a time.</div>
+  </div>
+</section>
+
+<section id="existing">
+  <h2>Using it on an existing repo</h2>
+  <ol class="steps">
+    <li>Copy <code>tools/aidlc/</code>, <code>.aidlc/</code>, <code>.githooks/</code> and the CI job. Merge <code>.claude/</code>, <code>.github/</code> and <code>AGENTS.md</code> with what you already have.</li>
+    <li>Edit <code>.aidlc/config.json</code>: base branch, test command, Jira key pattern, limits.</li>
+    <li>Write <code>.aidlc/context/project.md</code>: purpose, architecture, conventions, build/test commands, do-not-touch areas. <b>This is how the AI knows the background.</b></li>
+    <li>Add repo-specific protected paths (generated code, shared libraries) to <code>guardrails.json</code>.</li>
+  </ol>
+  <p><b>How does it know <i>where</i> to change code?</b> The AI explores the codebase in ANALYZE/DESIGN and lists the exact
+  "Affected files". <b>You check that list at G2.</b> It then becomes the scope fence the script enforces.</p>
+</section>
+
+<section id="faq">
+  <h2>FAQ and glossary</h2>
+  <details><summary>Does anything run in the background?</summary><p>No. The workflow moves only while an AI chat is running <code>/aidlc-run</code>. Between sessions, everything waits safely in the state files.</p></details>
+  <details><summary>Can I switch from Claude to Copilot halfway?</summary><p>Yes. The state lives in files, not in the chat. The audit log records which tool did each stage.</p></details>
+  <details><summary>What if the AI edits something it shouldn't?</summary><p>Claude is blocked immediately by a hook. For Copilot, the script's git-diff check fails the stage, and CI fails the MR.</p></details>
+  <details><summary>Can the AI fake an approval?</summary><p>It's blocked several ways locally, but a determined process on the same machine could forge files. For full assurance, approvals should come from GitLab MR approvals or Jira (a planned enhancement).</p></details>
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td>Run</td><td>One requirement's journey, e.g. LT-001, stored in <code>.aidlc/runs/LT-001/</code></td></tr>
+    <tr><td>Artifact</td><td>A document produced by a stage (spec, design, plan…)</td></tr>
+    <tr><td>Gate (G1/G2/G3)</td><td>A point where a human must approve before the run continues</td></tr>
+    <tr><td>Skill</td><td>A Markdown file of instructions the AI follows for one stage</td></tr>
+    <tr><td>Scope fence</td><td><code>allowed_files</code> in the plan: the only files the AI may change</td></tr>
+    <tr><td>Seal</td><td>Copying the finished run into <code>.aidlc/records/</code> and committing it as evidence</td></tr>
+    <tr><td>REWORK / BLOCKED</td><td>Sent back with feedback / stopped after too many failed checks</td></tr>
+  </table>
+</section>
+</main>
+</div>
+<script>
+  const links=[...document.querySelectorAll('nav a')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));map.get(e.target.id)?.classList.add('active');}})},{rootMargin:'-20% 0px -70% 0px'});
+  document.querySelectorAll('section[id]').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
