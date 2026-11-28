@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "engine": "1.0.0",
+  "req_id": "LT-004",
+  "title": "Manager screen for deciding on leave",
+  "source": {
+    "type": "file",
+    "path": "requirements/LT-004.md",
+    "title": "Manager screen for deciding on leave",
+    "depends_on": [
+      "LT-002"
+    ],
+    "sha256": "sha256:ba7bde85158b0a266ced47c93cebb300eee0847e515da86e7763b937f0179b8b"
+  },
+  "depends_on": [
+    "LT-002"
+  ],
+  "branch": "aidlc/LT-004",
+  "base_branch": "main",
+  "base_sha": "eae01c5571e73c8e47c67f18a730f9d76323fff8",
+  "stage": "DONE",
+  "status": "DONE",
+  "created_at": "2026-11-28T13:58:23Z",
+  "attempts": {},
+  "artifacts": {
+    "INTAKE": {
+      "path": "requirement.md",
+      "sha256": "sha256:aa58ca2824241799755e2d672b20aa3f15111752accfacb11882e73224697741"
+    },
+    "ANALYZE": {
+      "path": "spec.md",
+      "sha256": "sha256:341468ea49ec5927f380414a4100587f68842c1224c0aa5c98940dde858cf5fa"
+    },
+    "DESIGN": {
+      "path": "design.md",
+      "sha256": "sha256:214d2726a43a83a1b536a2590b482d3158941a307e1a47c8faec77b6aa5d4f80"
+    },
+    "PLAN": {
+      "path": "plan.md",
+      "sha256": "sha256:00ebfbe18ea07086ed78cb30b131c62030b04eddefafa1625faf4e6e074e0e97"
+    },
+    "IMPLEMENT": {
+      "path": "implementation-notes.md",
+      "sha256": "sha256:f98de89dab40d7d80908a0cf532992bb983d2d427950ca5efffad537b8cad8cb",
+      "head": "a4e596e613f659bb7d6872bc7a144747b35de0b3"
+    },
+    "TEST": {
+      "path": "test-report.md",
+      "sha256": "sha256:830d0fade786bed6e765bc21967c4ad0fd2f068bdc268107c2dd59d5bdc983f3",
+      "head": "a4e596e613f659bb7d6872bc7a144747b35de0b3"
+    },
+    "REVIEW": {
+      "path": "review.md",
+      "sha256": "sha256:49632fb18ebb7bc40233b2eb8e3186f51834b8707279d771d58649c704af67e5",
+      "head": "a4e596e613f659bb7d6872bc7a144747b35de0b3"
+    },
+    "MR": {
+      "path": "mr.md",
+      "sha256": "sha256:9697ddbce63e4b4e2d3cd38865fb47b02468b52b1e5c33275c00aa47671060bd"
+    }
+  },
+  "updated_at": "2026-11-28T14:57:37Z",
+  "last_test": {
+    "command": "dotnet test app/LeaveTracker.sln",
+    "exit_code": 0,
+    "at": "2026-11-28T14:42:25Z",
+    "log_sha256": "sha256:17318e065f1f97d2b747f4e0ffe9abe359189014645d3d500f1ac61f4945aab2"
+  },
+  "completed_at": "2026-11-28T14:57:37Z"
+}

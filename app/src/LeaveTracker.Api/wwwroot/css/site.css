@@ -178,3 +178,54 @@ th { font-size: 0.875rem; color: var(--muted); }
 }
 
 [hidden] { display: none !important; }
+
+/* ---- Manager page (LT-004). Only new class names, so the employee page is unchanged. ---- */
+
+.page-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-left: 0.5rem;
+}
+
+.nav-link {
+  color: var(--accent-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.message-info {
+  background: var(--card);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.message-info a { color: var(--accent-dark); font-weight: 600; }
+
+/* Reject and Cancel: outlined, with words as the difference; colour only adds to it (AC12). */
+.button-secondary {
+  background: #fff;
+  color: var(--error-text);
+  border: 2px solid var(--error-text);
+  padding: calc(0.55rem - 2px) calc(1.25rem - 2px);
+}
+
+.button-secondary:hover:not(:disabled) { background: var(--error-bg); }
+
+.decision-cancel {
+  color: var(--text);
+  border-color: #7a8391;
+}
+
+.decision-cancel:hover:not(:disabled) { background: var(--bg); }
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.decision-row > td { background: var(--bg); border-left: 0.375rem solid var(--accent); }
+
+.decision-panel { padding: 0.25rem 0; }
+.decision-title { font-weight: 600; margin: 0 0 0.75rem; }
